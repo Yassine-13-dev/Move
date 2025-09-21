@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Portfolio</title>
+<link rel="stylesheet" href="Styles/main.css">
+</head>
+ <body>
+  <!--Canvas-->
+  <canvas id="matrix"></canvas>
+
+  <!--Hexagon + logo + Animations-->
+  <div class="center-stage" aria-hidden="false">
+    <div class="firewall-shape" role="img" aria-label="Pare-feu virtuel">
+      <div class="inner"></div>
+
+      <!--Logo + Text centered-->
+
+      <div class="hex-logo">
+        <div class="brand">SECURE PORTFOLIO</div>
+        <div class="sub">SECURITY PROFILE</div>
+      </div>
+
+      <!--SVG overlay for the animated stroke-->
+      <svg class="scan-svg" viewBox="0 0 100 100" preserveAspecRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#00ff88" stop-opacity="1"/>
+            <stop offset="50%" stop-color="#00f7ff" stop-opacity="1"/>
+            <stop offset="100%" stop-color="#00ff88" stop-opacity="1"/>
+          </linearGradient>
+        </defs>
+
+        <!--Polygon hexagon approxumated in percentage coordinates-->
+        <polygon class="scan-path" points="25,6.7 75,6.7 100,50 75,93.3 25,93.3 0,50"/>
+      </svg>
+      </div>
+  </div>
+    <!--Small point rotation-->
+    <div class="glow-dot" aria-hidden="true">
+      <div class="glow-dot1" aria-hidden="true"></div>
+      <div class="glow-dot2" aria-hidden="true"></div>
+    </div>
+     <!-- CTA button (positionné ~60px sous l'hexagone) -->
+    <!-- CTA button (positionné ~60px sous l'hexagone) -->
+  <button id="breach-trigger"
+          class="cta-button"
+          aria-label="Initier la brèche - INITIATE BREACH"
+          aria-pressed="false">
+    [ INITIATE BREACH ]
+  </button>
+  <!-- Main JS -->
+  <script src="Scripts/main.js"></script>
+ </body>
+</html>

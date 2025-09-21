@@ -1,0 +1,260 @@
+/* Styles/main.css */
+/* Styles pour l'hexagone "firewall" avec animation néon et scan */
+
+  :root{
+    --bg:#000000;
+    --neon: #00ff88;      /* couleur néon principale (ajuste ici) */
+    --neon-2:#00f7ff;
+    --muted: rgba(255,255,255,0.08);
+  }
+  html,body{height:100%;margin:0;background:var(--bg);font-family: "Courier New", monospace;}
+  /* Canvas matrix occupe tout l'écran, derrière */
+  #matrix { position:fixed; inset:0; width:100%; height:100%; display:block; z-index:0; }
+
+  /* ---------- Centrage et conteneur ---------- */
+  .center-stage{
+    position:fixed;
+    left:50%; top:50%;
+    transform:translate(-50%,-50%);
+    z-index:2; /* devant le canvas */
+    width:420px; height:380px; /* ajuste la taille */
+    max-width: 90%;
+    display:flex;
+    flex-direction: column;
+    align-items:center;
+    justify-content:center;
+  }
+
+  /* ---------- Hexagone créé via clip-path ---------- */
+  .firewall-shape{
+    position:relative;
+    width:100%;
+    max-width:420px;
+    height:100%;
+    /* clip-path hexagon (regular-ish): left-top, right-top, right, right-bottom, left-bottom, left */
+    clip-path: polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%);
+    -webkit-clip-path: polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%);
+    background: rgba(0,0,0,0.18); /* très léger remplissage interne pour profondeur */
+    border: 4px solid rgba(0,255,136,0.95); /* le "contour" hexagonal (sera clipé) */
+    box-shadow:
+      0 0 12px rgba(0,255,136,0.12),
+      0 0 28px rgba(0,247,255,0.06),
+      inset 0 0 10px rgba(0,255,136,0.04);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition: transform 240ms ease;
+    /* animation de "respiration" (pulse lent) */
+    animation: firewall-pulse 4s ease-in-out infinite;
+    pointer-events:auto; /* si tu veux interagir par la suite */
+  }
+
+  /* inner panel pour créer effet "bordure creuse" */
+  .firewall-shape .inner {
+    position:absolute;
+    inset:12px; /* épaisseur "intérieure" - ajuste */
+    clip-path: inherit; /* reprend la même forme */
+    -webkit-clip-path: inherit;
+    background: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(3,6,10,0.25));
+    border-radius:6px;
+    box-shadow: inset 0 2px 18px rgba(0,0,0,0.6);
+    pointer-events:none;
+  }
+
+  /* ---------- Texte/logo centré ---------- */
+  .hex-logo{
+    position:relative;
+    z-index:3;
+    text-align:center;
+    pointer-events:none;
+  }
+  .hex-logo .brand{
+    font-family: "JetBrains Mono", "Courier New", monospace;
+    font-weight:800;
+    letter-spacing:4px;
+    font-size:20px;
+    color: var(--neon);
+    text-shadow:
+      0 0 6px rgba(0,255,136,0.85),
+      0 0 18px rgba(0,247,255,0.12);
+    margin:0;
+  }
+  .hex-logo .sub{
+    margin-top:8px;
+    color: rgba(160,255,200,0.85);
+    font-size:13px;
+    letter-spacing:1px;
+    text-shadow: 0 0 6px rgba(0,255,136,0.06);
+  }
+
+  /* ---------- SVG scan overlay (animé) ---------- */
+  .scan-svg{
+    position:absolute;
+    inset:0;
+    width:100%; height:100%;
+    z-index:4;
+    pointer-events:none;
+  }
+  /* animation du dash pour effet "points qui bougent le long des bords" */
+  .scan-path{
+    fill:none;
+    stroke: url(#grad); /* gradient stroke */
+    stroke-width:4;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    stroke-dasharray: 8 42; /* dash + gap -> apparence de points circulants */
+    animation: dash-move 3s linear infinite;
+    opacity:0.95;
+    filter: drop-shadow(0 0 8px rgba(0,255,136,0.5));
+  }
+
+  /* ---------- petite "ghost" lueur mobile (optionnelle) ---------- */
+  .glow-dot{
+    position:absolute;
+    width:10px; height:10px;
+    border-radius:50%;
+    background: var(--neon);
+    box-shadow: 0 0 12px rgba(0,255,136,0.9), 0 0 30px rgba(0,247,255,0.12);
+    z-index:5;
+    pointer-events:none;
+    left:50%; top:30%; /* position de départ (ajuste) */
+    transform-origin: -100px 300px; /* transforme la rotation pour décrire le périmètre */
+    animation: rotate-dot 6s linear infinite;
+    opacity:0.85;  /* légère transparence (optionnelle) */
+  }
+
+  .glow-dot1{
+     position:absolute;
+    width:10px; height:10px;
+    border-radius:50%;
+    background: var(--neon);
+    box-shadow: 0 0 12px rgba(0,255,136,0.9), 0 0 30px rgba(0,247,255,0.12);
+    z-index:5;
+    pointer-events:none;
+    left:50%; top:30%; /* position de départ (ajuste) */
+    transform-origin: -100px 300px; /* transforme la rotation pour décrire le périmètre */
+    animation: rotate-dot 6s linear infinite;
+    opacity:0.85;  /* légère transparence (optionnelle) */
+  }
+
+  .glow-dot2 {
+     position:absolute;
+    width:10px; height:10px;
+    border-radius:50%;
+    background: var(--neon);
+    box-shadow: 0 0 12px rgba(0,255,136,0.9), 0 0 30px rgba(0,247,255,0.12);
+    z-index:5;
+    pointer-events:none;
+    left:30%; top:50%; /* position de départ (ajuste) */
+    transform-origin: 300px -300px; /* transforme la rotation pour décrire le périmètre */
+    animation: rotate-dot 6s infinite;
+    opacity:0.85;  /* légère transparence (optionnelle) */
+  }
+
+
+   /* CTA BUTTON */
+  .cta-button {
+    bottom: 90px;
+    left: 580px;
+    position: absolute;
+    appearance:none;
+    -webkit-appearance:none;
+    border: 1px solid rgba(0, 179, 255, 0.1); /* fine bordure optionnelle */
+    background: transparent;
+    color: var(--neon);
+    font-family: "Courier New", monospace;
+    font-weight:700;
+    font-size:20px; /* ~1.1rem */
+    padding:6px 18px;
+    border-radius:16px;
+    cursor:pointer;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    text-shadow: 0 0 6px rgba(0,255,136,0.25);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.6);
+    pointer-events:auto; /* rend le bouton cliquable malgré parent pointer-events:none */
+    z-index:6;
+    transition: transform 160ms ease, box-shadow 200ms ease, color 160ms ease;
+    /* CLIGNOTEMENT DOUX */
+    animation: blink 1.8s ease-in-out infinite;
+    opacity: 1;
+    border-width: 8px;
+  }
+  .cta-button:hover{  /* son a ajouter ici*/
+    color: var(--neon-2);
+    box-shadow:
+      0 0 12px rgba(0,255,136,0.25),
+      0 0 28px rgba(0,247,255,0.12),
+      0 2px 14px rgba(0,0,0,0.8);
+    transform: scale(1.04);
+    border-width: 2px;
+    animation-play-state: paused; /* stoppe le clignotement au hover */
+  }
+  .cta-button:active{ /* son a ajouter ici*/
+    transform: scale(0.98);
+    box-shadow: 0 1px 6px rgba(0,0,0,0.9);
+    color: var(--neon);
+    border-width: 1px;
+  }
+  .cta-button:focus{  /* son a ajouter ici*/
+    outline:none;
+    box-shadow:
+      0 0 18px rgba(0,255,136,0.35),
+      0 0 48px rgba(0,247,255,0.18),
+      0 2px 14px rgba(0,0,0,0.8);
+    border-width: 2px;
+  }
+
+
+  /* ---------- Keyframes ---------- */
+  @keyframes firewall-pulse {
+    0%{
+      box-shadow:
+        0 0 8px rgba(0,255,136,0.06),
+        0 0 18px rgba(0,247,255,0.03),
+        inset 0 0 6px rgba(0,255,136,0.02);
+      transform: scale(0.995);
+      border-color: rgba(0,255,136,0.85);
+    }
+    50%{
+      box-shadow:
+        0 0 20px rgba(0,255,136,0.18),
+        0 0 48px rgba(0,247,255,0.12),
+        inset 0 0 18px rgba(0,255,136,0.06);
+      transform: scale(1.01);
+      border-color: rgba(0,255,136,1);
+    }
+    100%{
+      box-shadow:
+        0 0 8px rgba(0,255,136,0.06),
+        0 0 18px rgba(0,247,255,0.03),
+        inset 0 0 6px rgba(0,255,136,0.02);
+      transform: scale(0.995);
+      border-color: rgba(0,255,136,0.85);
+    }
+  }
+
+  @keyframes dash-move {
+    to { stroke-dashoffset: -500; }
+  }
+
+  @keyframes rotate-dot {
+    from { transform: rotate(0deg) translateX(160px) rotate(0deg); }
+    to   { transform: rotate(360deg) translateX(160px) rotate(-360deg); }
+  }
+
+  /* responsive */
+  @media (max-width:520px){
+    .center-stage{ width:300px; height:260px; }
+    .hex-logo .brand{ font-size:26px; letter-spacing:2px; }
+  }
+  @media (max-width:360px){
+    .center-stage{ width:240px; height:210px; }
+    .hex-logo .brand{ font-size:20px; letter-spacing:1px; }
+    .hex-logo .sub{ font-size:11px; }
+  }
+  @media (max-width:280px){
+    .center-stage{ width:200px; height:180px; }
+    .hex-logo .brand{ font-size:16px; letter-spacing:0px; }
+    .hex-logo .sub{ font-size:10px; }
+  }
